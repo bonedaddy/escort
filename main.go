@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"compress/flate"
 	"encoding/base64"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -18,20 +20,34 @@ func main() {
 			Name:  "compress",
 			Usage: "compress data using DEFLATE and base64 encode it",
 			Action: func(c *cli.Context) error {
+				var data string
+				if c.String("input") != "" {
+					data = c.String("input")
+				} else if c.String("input.file") != "" {
+					dBytes, err := ioutil.ReadFile(c.String("input.file"))
+					if err != nil {
+						return err
+					}
+					data = string(dBytes)
+				} else {
+					return errors.New("input.file and input are nil")
+				}
 				buffer := new(bytes.Buffer)
 				writer, err := flate.NewWriter(buffer, flate.BestCompression)
 				if err != nil {
 					return err
 				}
-				if _, err := writer.Write([]byte(c.String("input"))); err != nil {
+				if _, err := writer.Write([]byte(data)); err != nil {
 					return err
 				}
 
 				if err := writer.Close(); err != nil {
 					return err
 				}
-
-				fmt.Println(base64.StdEncoding.EncodeToString(buffer.Bytes()))
+				parts := Chunks(base64.StdEncoding.EncodeToString(buffer.Bytes()), 255)
+				for _, part := range parts {
+					fmt.Println(part)
+				}
 				return nil
 			},
 		},
@@ -67,8 +83,35 @@ func main() {
 			Name:  "input",
 			Usage: "input data to compress",
 		},
+		&cli.StringFlag{
+			Name:  "input.file",
+			Usage: "input data to compress from a file",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		panic(err)
 	}
+}
+
+// Chunks is used to split a string into segments of chunkSize
+// https://stackoverflow.com/questions/25686109/split-string-by-length-in-golang
+func Chunks(s string, chunkSize int) []string {
+	if chunkSize >= len(s) {
+		return []string{s}
+	}
+	var chunks []string
+	chunk := make([]rune, chunkSize)
+	len := 0
+	for _, r := range s {
+		chunk[len] = r
+		len++
+		if len == chunkSize {
+			chunks = append(chunks, string(chunk))
+			len = 0
+		}
+	}
+	if len > 0 {
+		chunks = append(chunks, string(chunk[:len]))
+	}
+	return chunks
 }
