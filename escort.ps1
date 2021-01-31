@@ -1,4 +1,6 @@
 # queries the given host_name for a TXT record expecting the value to be a base64 encoded DEFLATE compressed string
+# base64 decoding was taken from # encoding from https://gist.github.com/vortexau/13de5b6f9e46cf419f1540753c573206
+
 param (
     [string]$host_name = "base64.bonedaddy.io",
     [string]$dns_server = "8.8.8.8"
