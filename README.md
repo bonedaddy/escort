@@ -47,4 +47,5 @@ This will query the host `test4.example.org` for TXT records and use that to con
 
 # Caveats
 
-Due to the usage of DEFLATE the powershell script you are compressing and base64 encoding must be a minimum of 45 characters in length, otherwise you should skip the deflate process.
+* Due to the usage of DEFLATE the powershell script you are compressing and base64 encoding must be a minimum of 45 characters in length, otherwise you should skip the deflate process as this will just increase the size of your payload, however this will require modifying `escort.ps1` as it expects a base64 encoded DEFLATE compressed payload.
+* I haven't actually tested if this evades antivirus detection yet, but that will be done shortly.
