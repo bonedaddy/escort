@@ -21,7 +21,7 @@ for ($i=0; $i -lt $ordered_parts.length; $i++) {
 }
 
 # uncomment to debug
-Write-Host $base64_output
+# Write-Host $base64_output
 
 $data = [System.Convert]::FromBase64String($base64_output)
 $ms = New-Object System.IO.MemoryStream
