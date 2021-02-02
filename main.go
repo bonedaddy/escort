@@ -44,9 +44,9 @@ func main() {
 				if err := writer.Close(); err != nil {
 					return err
 				}
-				parts := Chunks(base64.StdEncoding.EncodeToString(buffer.Bytes()), 255)
-				for _, part := range parts {
-					fmt.Println(part)
+				parts := Chunks(base64.StdEncoding.EncodeToString(buffer.Bytes()), 250)
+				for i, part := range parts {
+					fmt.Printf("%v|%s\n", i, part)
 				}
 				return nil
 			},

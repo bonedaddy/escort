@@ -7,12 +7,20 @@ param (
 )
 
 $dns_result = Resolve-DnsName -Name $host_name -Type TXT -Server $dns_server | Select-Object Strings
-$base64_output = ''
-$deconstructed_query = ''
+$ordered_parts = New-Object string[] $dns_result.Strings.length
 
-# reconstruct the output
+# order the base64 encoded segments correctly
 for ($i=0; $i -lt $dns_result.Strings.length; $i++) {
-    $base64_output += $dns_result.Strings[$i]
+    # make sure the string is not empty
+    if (![string]::IsNullOrEmpty($dns_result.Strings[$i])) {
+        # split the result using the first part as the array index and the second part as the value
+        $ordered_parts[$dns_result.Strings[$i].split("|")[0]] = $dns_result.Strings[$i].split("|")[1]
+    }
+}
+
+$base64_output = ''
+for ($i=0; $i -lt $ordered_parts.length; $i++) {
+    $base64_output += $ordered_parts[$i]
 }
 
 # uncomment to debug
@@ -23,6 +31,7 @@ $ms = New-Object System.IO.MemoryStream
 $ms.Write($data, 0, $data.Length)
 $ms.Seek(0,0) | Out-Null
 $sr = New-Object System.IO.StreamReader(New-Object System.IO.Compression.DeflateStream($ms, [System.IO.Compression.CompressionMode]::Decompress))
+$deconstructed_query = ''
 while ($line = $sr.ReadLine()) {  
     $deconstructed_query += $line
 }
