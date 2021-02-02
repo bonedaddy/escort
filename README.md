@@ -2,7 +2,11 @@
 
 ![](./escort.jpg)
 
-`escort` is an experiment at using DNS TXT records for transmitting malicious payloads to bypass Anti Virus detection. It currently only supports PowerShell payloads (ie reverse shells with powershell) however ideally I will expand this to other potential payload systems. It consists of taking your payload, compressing with DEFLATE and base64 encoding it. Because not all DNS servers are equal, some servers may return DNS record values not in the order they are declared in. For example CoreDNS using the BIND zone file format will serve results in the order they are declared in, but AWS Route53 may or may not do this. As such we mark the beginning of the base64 encoded with a segment identifier. We use the `|` character which is not a valid base64 encoded character to mark the end of the segment identifier and the beginning of the base64 encoded segment. Escort uses this information to recombine the bsae64 segments before decoding them. After decoding we decompress the output and execute it with `Invoke-Expression` cmdlet to avoid writing the script to disk
+`escort` is an experiment at using DNS TXT records for transmitting malicious payloads to bypass Anti Virus detection. It currently only supports PowerShell payloads (ie reverse shells with powershell) however ideally I will expand this to other potential payload systems. It consists of taking your payload, compressing with DEFLATE and base64 encoding it.
+
+Because not all DNS servers are equal, some servers may return DNS record values not in the order they are declared in. For example CoreDNS using the BIND zone file format will serve results in the order they are declared in, but AWS Route53 may or may not do this. As such we mark the beginning of the base64 encoded with a segment identifier. 
+
+We use the `|` character which is not a valid base64 encoded character to mark the end of the segment identifier and the beginning of the base64 encoded segment. Escort uses this information to recombine the bsae64 segments before decoding them. After decoding we decompress the output and execute it with `Invoke-Expression` cmdlet to avoid writing the script to disk
 
 # Usage
 
