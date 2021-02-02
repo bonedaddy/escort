@@ -11,8 +11,11 @@ $ordered_parts = New-Object string[] $dns_result.Strings.length
 
 # order the base64 encoded segments correctly
 for ($i=0; $i -lt $dns_result.Strings.length; $i++) {
-    # split the result using the first part as the array index and the second part as the value
-    $ordered_parts[$dns_result.Strings[$i].split("|")[0]] = $dns_result.Strings[$i].split("|")[1]
+    # make sure the string is not empty
+    if (![string]::IsNullOrEmpty($dns_result.Strings[$i])) {
+        # split the result using the first part as the array index and the second part as the value
+        $ordered_parts[$dns_result.Strings[$i].split("|")[0]] = $dns_result.Strings[$i].split("|")[1]
+    }
 }
 
 $base64_output = ''
