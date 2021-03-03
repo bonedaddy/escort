@@ -1,22 +1,24 @@
 package agent
 
 import (
+	"context"
 	"testing"
 
-	"github.com/Shopify/go-lua"
 	"github.com/stretchr/testify/require"
 )
 
 var (
-	testLuaProgram = `
-		print("Hello World")
+	tengoHelloWorld = `
+	fmt := import("fmt")
+	fmt.println("hello world")
 	`
 )
 
 func TestAgent(t *testing.T) {
-	l := lua.NewState()
-	lua.OpenLibraries(l)
-	require.NoError(t, lua.DoString(l, testLuaProgram))
+	agent := New()
+	exe := agent.NewEXE(tengoHelloWorld)
+	exe.SetImports("fmt")
+	require.NoError(t, exe.Run(context.Background()))
 }
 
 /*
