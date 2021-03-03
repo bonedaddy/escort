@@ -17,7 +17,6 @@ var (
 func TestAgent(t *testing.T) {
 	agent := New()
 	exe := agent.NewEXE(tengoHelloWorld)
-	exe.SetImports("fmt")
 	require.NoError(t, exe.Run(context.Background()))
 }
 

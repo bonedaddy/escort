@@ -13,6 +13,7 @@ type Agent struct {
 
 // Executable is a single instance of an executable to run
 type Executable struct {
+	src      string
 	script   *tengo.Script
 	compiled *tengo.Compiled
 }
@@ -22,15 +23,13 @@ func New() *Agent { return &Agent{} }
 
 // NewEXE returns a new executable
 func (a *Agent) NewEXE(src string) *Executable {
+	script := tengo.NewScript([]byte(src))
+	// register all stdlib imports
+	script.SetImports(stdlib.GetModuleMap(stdlib.AllModuleNames()...))
 	return &Executable{
-		script: tengo.NewScript([]byte(src)),
+		src:    src,
+		script: script,
 	}
-}
-
-// SetImports is used to set the imports needed by the tengo script
-// these must be stdlib imports or else it will not function
-func (e *Executable) SetImports(imports ...string) {
-	e.script.SetImports(stdlib.GetModuleMap(imports...))
 }
 
 // Run executes the given tengo script
