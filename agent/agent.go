@@ -22,7 +22,8 @@ type Executable struct {
 func New() *Agent { return &Agent{} }
 
 // NewEXE returns a new executable
-func (a *Agent) NewEXE(src string) *Executable {
+// we declare the function like this to enable obfuscating its name
+func NewEXE(agent *Agent, src string) *Executable {
 	script := tengo.NewScript([]byte(src))
 	// register all stdlib imports
 	script.SetImports(stdlib.GetModuleMap(stdlib.AllModuleNames()...))
@@ -32,12 +33,12 @@ func (a *Agent) NewEXE(src string) *Executable {
 	}
 }
 
-// Run executes the given tengo script
-func (e *Executable) Run(ctx context.Context) error {
-	compiled, err := e.script.RunContext(ctx)
+// RunEXE executes the given tengo script
+func RunEXE(ctx context.Context, exe *Executable) error {
+	compiled, err := exe.script.RunContext(ctx)
 	if err != nil {
 		return err
 	}
-	e.compiled = compiled
+	exe.compiled = compiled
 	return nil
 }

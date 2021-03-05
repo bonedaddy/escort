@@ -31,8 +31,8 @@ func main() {
 							return err
 						}
 						agt := agent.New()
-						exe := agt.NewEXE(string(src))
-						return exe.Run(c.Context)
+						exe := agent.NewEXE(agt, string(src))
+						return agent.RunEXE(c.Context, exe)
 					},
 					Flags: []cli.Flag{
 						&cli.StringFlag{

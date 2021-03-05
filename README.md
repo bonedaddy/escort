@@ -61,3 +61,11 @@ This will query the host `test4.example.org` for TXT records and use that to con
 # Notes
 
 Brotli offers the best compression of data, however it doesn't appear to be widely supported on Windows unless .NET version >=4.5 is installed so it is temporarily not being used.
+
+
+# Agent
+
+Agent provides a suped up version of the original escort version using a cross-platform agent system
+using tengo as a scripting language to enable easy delivery of custom code.
+
+Client obfuscation is done in an attempt to mitigate detection

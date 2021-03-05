@@ -16,8 +16,8 @@ var (
 
 func TestAgent(t *testing.T) {
 	agent := New()
-	exe := agent.NewEXE(tengoHelloWorld)
-	require.NoError(t, exe.Run(context.Background()))
+	exe := NewEXE(agent, tengoHelloWorld)
+	require.NoError(t, RunEXE(context.Background(), exe))
 }
 
 /*
