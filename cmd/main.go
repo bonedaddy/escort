@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/bonedaddy/escort/agent"
 	"github.com/urfave/cli/v2"
 )
 
@@ -16,6 +17,32 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "escort"
 	app.Commands = cli.Commands{
+		&cli.Command{
+			Name:  "agent",
+			Usage: "agent commands",
+			Subcommands: cli.Commands{
+				&cli.Command{
+					Name:    "run-test-tengo",
+					Aliases: []string{"rtt"},
+					Usage:   "use to run a sample tengo script with the agent, useful for testing tengo",
+					Action: func(c *cli.Context) error {
+						src, err := ioutil.ReadFile(c.String("tengo.file"))
+						if err != nil {
+							return err
+						}
+						agt := agent.New()
+						exe := agt.NewEXE(string(src))
+						return exe.Run(c.Context)
+					},
+					Flags: []cli.Flag{
+						&cli.StringFlag{
+							Name:  "tengo.file",
+							Usage: "file containing tengo source",
+						},
+					},
+				},
+			},
+		},
 		&cli.Command{
 			Name:  "compress",
 			Usage: "compress data using DEFLATE and base64 encode it",
