@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/coredns/caddy"
@@ -59,7 +60,7 @@ func parse(c *caddy.Controller) (*Escort, error) {
 	var (
 		stateFile string
 		dataFiles []string
-		xorKey    *byte = nil
+		xorKey    string
 	)
 	for c.Next() {
 		for c.NextBlock() {
@@ -72,23 +73,23 @@ func parse(c *caddy.Controller) (*Escort, error) {
 				dataFiles = c.RemainingArgs()
 			case "xor_key":
 				args := c.RemainingArgs()
-				xorKeyStr := args[0]
-				if len(xorKeyStr) != 1 {
-					return nil, plugin.Error("escort", errors.New("xor_key length greater than 1"))
+				xorKey = args[0]
+				if len(xorKey) != 1 {
+					return nil, plugin.Error("escort", fmt.Errorf("xor_key %s length %v not equal to 1", xorKey, len(xorKey)))
 				}
-				a := xorKeyStr[0]
-				xorKey = &a
 			}
 		}
 	}
 	if stateFile == "" {
 		return nil, plugin.Error("escort", errors.New("no state_file arg found"))
 	}
+
 	state, err := NewStateSynchronized(stateFile, xorKey, dataFiles)
 	if err != nil {
 		// dont wrap error with plugin.Error as the function does that
 		return nil, err
 	}
+
 	return &Escort{state: state}, nil
 }
 
