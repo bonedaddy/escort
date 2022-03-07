@@ -2,13 +2,27 @@
 
 ![](./escort.jpg)
 
-`escort` is an experiment at using DNS TXT records for transmitting malicious payloads to bypass Anti Virus detection. It currently only supports PowerShell payloads (ie reverse shells with powershell) however ideally I will expand this to other potential payload systems. It consists of taking your payload, compressing with DEFLATE and base64 encoding it.
+`escort` is a framework for using DNS a means of smuggling information across network boundaries while evading detection. It provides a loader system for Windows based OS' using PowerShell, as well as a CLI, and Golang library for assisting with the creation of escort'd DNS records. In addition to this a CoreDNS plugin is provided which makes it easy to run a DNS server with built-in escort capabilities.
 
-Because not all DNS servers are equal, some servers may return DNS record values not in the order they are declared in. For example CoreDNS using the BIND zone file format will serve results in the order they are declared in, but AWS Route53 may or may not do this. As such we mark the beginning of the base64 encoded with a segment identifier. 
+`escort` relies on a few different factors to accomplish its objects:
+* DNS is used on practically every single compute network out there, regardless of whether or not the network is internet connected
+* A number of different record types exist, allowing for multiple different methods of disguising data
+* If a particular domain name becomes identified as associated with `escort` traffi and blacklisted, get a new domain name and problem solved
+* Lets encrypt makes it easy to create valid certificates
 
-We use the `|` character which is not a valid base64 encoded character to mark the end of the segment identifier and the beginning of the base64 encoded segment. Escort uses this information to recombine the bsae64 segments before decoding them. After decoding we decompress the output and execute it with `Invoke-Expression` cmdlet to avoid writing the script to disk
+In addition to this, when parsing data to be served by `escort` a process known as `trick`'ing, an extremely simple single-byte XOR filter can be used, which helps to slow down the process of signature analysis of escort related traffic.
 
-# Usage
+At the moment the `escort` workflow consists of the following:
+
+* XOR the data to be tricked if needed
+* DEFLATE compress the data
+* base64 encode the data
+* segment data
+* create TXT records
+
+`escort` is alpha software intended for research purposes only.
+
+# Usage (out of date)
 
 To showcase usage an example payload is included in `payload.txt`
 
