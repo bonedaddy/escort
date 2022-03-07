@@ -13,7 +13,7 @@ import (
 // config syntax
 
 /*
-
+https://github.com/coredns/rrl/blob/master/plugins/rrl/setup.go
 	`state_file` is a JSON a file containing tricked data_files to avoid
 	having to repeteadly trick data at startup. the name of the file is used
 	as the hostname of the dns record. for example `data_files /foo/bar` would
