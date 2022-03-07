@@ -121,7 +121,7 @@ func (c *Core) TurnOut(
 	buf.Reset()
 	// check to see if we need to xor it first
 	if c.xorKey != nil {
-		c.xorData(decompressedData)
+		decompressedData = c.xorData(decompressedData)
 	}
 	return decompressedData, nil
 }
