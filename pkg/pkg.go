@@ -37,7 +37,7 @@ func (c *Core) Trick(
 	data []byte,
 ) ([]string, error) {
 	if c.xorKey != nil {
-		c.xorData(data)
+		data = c.xorData(data)
 	}
 	// if there is a key, perform xor encryption on the data first
 	buffer := new(bytes.Buffer)
