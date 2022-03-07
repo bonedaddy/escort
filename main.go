@@ -1,14 +1,13 @@
 package main
 
 import (
-	"bytes"
-	"compress/flate"
 	"encoding/base64"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 
+	"github.com/bonedaddy/escort/pkg"
 	"github.com/urfave/cli/v2"
 )
 
@@ -20,33 +19,27 @@ func main() {
 			Name:  "compress",
 			Usage: "compress data using DEFLATE and base64 encode it",
 			Action: func(c *cli.Context) error {
-				var data string
+				var (
+					data []byte
+					err  error
+				)
 				if c.String("input") != "" {
-					data = c.String("input")
+					data = []byte(c.String("input"))
 				} else if c.String("input.file") != "" {
-					dBytes, err := ioutil.ReadFile(c.String("input.file"))
+					data, err = ioutil.ReadFile(c.String("input.file"))
 					if err != nil {
 						return err
 					}
-					data = string(dBytes)
 				} else {
 					return errors.New("input.file and input are nil")
 				}
-				buffer := new(bytes.Buffer)
-				writer, err := flate.NewWriter(buffer, flate.BestCompression)
+				core := pkg.NewCore(nil, "1", 250)
+				parts, err := core.Trick(data)
 				if err != nil {
 					return err
 				}
-				if _, err := writer.Write([]byte(data)); err != nil {
-					return err
-				}
-
-				if err := writer.Close(); err != nil {
-					return err
-				}
-				parts := Chunks(base64.StdEncoding.EncodeToString(buffer.Bytes()), 250)
-				for i, part := range parts {
-					fmt.Printf("%v|%s\n", i, part)
+				for _, part := range parts {
+					fmt.Println(part)
 				}
 				return nil
 			},
