@@ -62,24 +62,27 @@ func parse(c *caddy.Controller) (*Escort, error) {
 		xorKey    *byte = nil
 	)
 	for c.Next() {
-		if c.NextBlock() {
-			for {
-				switch c.Val() {
-				case "state_file":
-					stateFile = c.RemainingArgs()[0]
-				case "data_files":
-					dataFiles = c.RemainingArgs()
-				case "xor_key":
-					args := c.RemainingArgs()
-					xorKeyStr := args[0]
-					if len(xorKeyStr) > 0 {
-						return nil, plugin.Error("escort", errors.New("xor_key length greater than 1"))
-					}
-					a := xorKeyStr[0]
-					xorKey = &a
+		for c.NextBlock() {
+			switch c.Val() {
+
+			case "state_file":
+				args := c.RemainingArgs()
+				stateFile = args[0]
+			case "data_files":
+				dataFiles = c.RemainingArgs()
+			case "xor_key":
+				args := c.RemainingArgs()
+				xorKeyStr := args[0]
+				if len(xorKeyStr) != 1 {
+					return nil, plugin.Error("escort", errors.New("xor_key length greater than 1"))
 				}
+				a := xorKeyStr[0]
+				xorKey = &a
 			}
 		}
+	}
+	if stateFile == "" {
+		return nil, plugin.Error("escort", errors.New("no state_file arg found"))
 	}
 	state, err := NewStateSynchronized(stateFile, xorKey, dataFiles)
 	if err != nil {
